@@ -55,16 +55,12 @@ You can run the entire project on Google Colab. Just upload the notebook and sta
 
 ## Results
 
-Visualized outputs during training:
-
-| Grayscale (L) | Colorized (Generated) | Original (Ground Truth) |
-|---------------|-----------------------|-------------------------|
-| ![L-channel](path_to_img1) | ![Generated](path_to_img2) | ![Original](path_to_img3) |
+After training, you can visualize the results by inputting grayscale images and checking the generated colorized output.
 
 ## Conclusion
 
 This project demonstrates the power of GANs in image colorization tasks. The U-Net generator combined with the PatchGAN discriminator provides a robust approach for generating high-quality color images from grayscale inputs.
 
 ## Future Work
-  -Extend the model to higher-resolution images.
-  -Improve colorization quality by experimenting with deeper networks or different GAN architectures.
+  - Extend the model to higher-resolution images.
+  - Improve colorization quality by experimenting with deeper networks or different GAN architectures.
