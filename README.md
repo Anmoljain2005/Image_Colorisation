@@ -1,65 +1,93 @@
-# Image Colorization with GANs
+# Image Colorization using GAN
 
-This project implements an image colorization model using Generative Adversarial Networks (GANs) in PyTorch. It allows you to input grayscale images and generate colored versions by training on a dataset of color images. The model uses a U-Net-based generator and a PatchGAN-based discriminator to achieve this task. This project can be run easily using Google Colab.
+This project implements a Generative Adversarial Network (GAN) for image colorization, leveraging the COCO dataset. The model takes grayscale images as input and generates colorized images using a combination of a U-Net generator and a Patch Discriminator.
 
-## Model Overview
+## Table of Contents
 
-The architecture consists of two main components:
-1. **Generator (U-Net)**
-2. **Discriminator (PatchGAN)**
+- [Introduction](#introduction)
+- [Dependencies](#dependencies)
+- [Dataset](#dataset)
+- [Model Architecture](#model-architecture)
+- [Training Procedure](#training-procedure)
+- [Usage](#usage)
+- [Results](#results)
+- [Acknowledgments](#acknowledgments)
 
-### Generator
+## Introduction
 
-The generator is a U-Net, which is a convolutional neural network designed for image-to-image tasks. It takes a grayscale image (single channel) as input and generates the corresponding color information (two channels representing the chrominance components in the L*a*b color space).
+Colorizing black and white images is a challenging problem in computer vision. This project utilizes GANs to generate realistic color images from grayscale inputs. The GAN consists of a generator that predicts color information and a discriminator that evaluates the authenticity of the generated images.
 
-- **U-Net Architecture**: 
-    - A series of downsampling and upsampling layers with skip connections. 
-    - The downsampling path extracts features from the input, while the upsampling path reconstructs the output image, using skip connections to combine high-resolution features from the encoder with those in the decoder.
-    - Pretrained ResNet-18 is used as the encoder to leverage transfer learning, improving the generator’s capability.
+## Dependencies
 
-### Discriminator
+To run this project, you will need the following Python packages:
 
-The discriminator is a PatchGAN, a type of GAN discriminator that classifies patches of an image as real or fake rather than the entire image. This helps the discriminator focus on local image details like textures and edges, which is crucial for tasks like colorization.
+- `torch`
+- `torchvision`
+- `numpy`
+- `PIL`
+- `skimage`
+- `matplotlib`
+- `fastai`
 
-- **PatchGAN Architecture**:
-    - A convolutional neural network that processes both the real and generated (fake) images.
-    - Instead of producing a single scalar value as output, it outputs a matrix where each value corresponds to a patch of the input image, determining whether the patch is real or fake.
+You can install the required packages in your Google Colab notebook using:
 
-### Loss Functions
-
-- **Generator Loss**: 
-  - GAN loss (BCE loss) ensures that the generator produces images that are indistinguishable from real images to the discriminator.
-  - L1 Loss ensures the generated images are close to the ground truth in pixel space, helping retain high-level content.
-  
-- **Discriminator Loss**: 
-  - GAN loss (BCE loss) is used to determine how well the discriminator can distinguish between real and generated images.
+```python
+!pip install fastai==2.4
+```
 
 ## Dataset
 
-We use the [COCO dataset](https://cocodataset.org/) for training and validation. This dataset contains diverse images, making it a good fit for colorization tasks.
-
-The dataset is directly accessed using the `fastai` library, which simplifies downloading and managing the data.
+This model uses a subset of the COCO dataset, specifically the sample images for training and validation. The dataset is automatically downloaded and extracted using the `fastai` library.
 
 ```python
 from fastai.data.external import untar_data, URLs
-
 coco_path = untar_data(URLs.COCO_SAMPLE)
-coco_path = str(coco_path) + "/train_sample"
 ```
 
-## How to Use
+The training set consists of 8,000 images, while the validation set includes 2,000 images, chosen randomly from the available samples.
 
-### Run on Google Colab
+## Model Architecture
 
-You can run the entire project on Google Colab. Just upload the notebook and start training the model. The code is designed to work seamlessly in Colab, so you don't need to install any dependencies manually.
+The model consists of two main components:
+
+1. **Generator**: A U-Net architecture (`SimpleUNet`) that takes a grayscale image as input and generates the corresponding color channels (a and b in the LAB color space).
+
+2. **Discriminator**: A Patch Discriminator (`PatchDiscriminator`) that evaluates the authenticity of generated images by distinguishing between real and fake images.
+
+## Training Procedure
+
+The training process involves alternating between updating the discriminator and generator based on their respective losses. The discriminator is trained to correctly classify real and fake images, while the generator aims to fool the discriminator into classifying its outputs as real.
+
+The training function is defined as follows:
+
+```python
+def train_gan(generator, discriminator, train_dl, opt_G, opt_D, criterion_GAN, criterion_L1, device, epochs=20, lambda_L1=100):
+    ...
+```
+
+You can adjust the number of epochs and other hyperparameters to optimize performance.
+
+## Usage
+
+After training the model, you can visualize the results by retrieving specific images from the data loader. The following functions are provided:
+
+- `get_nth_image(data_loader, n)`: Fetches the \(n\)-th image from the data loader.
+- `visualize_nth_image(generator, data_loader, n, device)`: Visualizes the grayscale input, real color image, and the generated color image.
+
+To visualize the \(n\)-th image, use:
+
+```python
+visualize_nth_image(generator, train_dl, n, device)
+```
 
 ## Results
 
-After training, you can visualize the results by inputting grayscale images and checking the generated colorized output.
+The model aims to produce visually appealing colorized images from grayscale inputs. During training, the loss values for both the generator and discriminator are logged for monitoring performance.
 
-## Conclusion
+## Acknowledgments
 
-This project demonstrates the power of GANs in image colorization tasks. The U-Net generator combined with the PatchGAN discriminator provides a robust approach for generating high-quality color images from grayscale inputs.
+- This project is inspired by advancements in image processing and deep learning techniques.
+- The COCO dataset is a widely used dataset in the computer vision community, providing a rich source of images for training models.
 
 ## Future Work
   - Extend the model to higher-resolution images.
