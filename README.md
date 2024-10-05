@@ -12,6 +12,7 @@ This project implements a Generative Adversarial Network (GAN) for image coloriz
 - [Usage](#usage)
 - [Results](#results)
 - [Acknowledgments](#acknowledgments)
+- [Future Work](#future-work)
 
 ## Introduction
 
